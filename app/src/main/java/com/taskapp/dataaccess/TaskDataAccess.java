@@ -1,7 +1,9 @@
 package com.taskapp.dataaccess;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,13 +69,14 @@ public class TaskDataAccess {
      * タスクをCSVに保存します。
      * @param task 保存するタスク
      */
-    // public void save(Task task) {
-    //     try () {
-
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+    public void save(Task task) {
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+            writer.write(task.getCode() + "," + task.getName() + "," + task.getStatus() + "," + task.getRepUser().getCode());
+            writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * コードを基にタスクデータを1件取得します。
@@ -101,7 +104,7 @@ public class TaskDataAccess {
                 task = new Task(taskCode, name, status, repUser);
                 break;
             }
-        } catch (IOException e) {
+        } catch(IOException e) {
             e.printStackTrace();
         }
         return task;
@@ -111,13 +114,25 @@ public class TaskDataAccess {
      * タスクデータを更新します。
      * @param updateTask 更新するタスク
      */
-    // public void update(Task updateTask) {
-    //     try () {
-
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+    public void update(Task updateTask) {
+        List<Task> tasks = findAll();
+        for(int i = 0; i < tasks.size(); i++) {
+            if(tasks.get(i).getCode() == updateTask.getCode()) {
+                tasks.set(i, updateTask);
+                break;
+            }
+        }
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write("コード,名前,ステータス,担当者コード");
+            writer.newLine();
+            for(Task t : tasks) {
+                writer.write(t.getCode() + "," + t.getName() + "," + t.getStatus() + "," + t.getRepUser().getCode());
+                writer.newLine();
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * コードを基にタスクデータを削除します。

@@ -37,4 +37,8 @@ public class UserLogic {
         System.out.println("ユーザー名：" + user.getName() + "でログインしました。");
         return user;
     }
+
+    public User findByCode(int code) {
+        return userDataAccess.findByCode(code);
+    }
 }
